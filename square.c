@@ -6,89 +6,44 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
-void getScreenInformation(int fbfd, struct fb_var_screeninfo* vinfo, struct fb_fix_screeninfo* finfo) {
-    // Get fixed screen information
-    if (ioctl(fbfd, FBIOGET_FSCREENINFO, finfo) == -1) {
-        perror("Error reading fixed information");
-        exit(2);
-    }
+//Point Data Structure
+typedef struct
+{
+    int x;
+    int y;
+} Point;
 
-    // Get variable screen information
-    if (ioctl(fbfd, FBIOGET_VSCREENINFO, vinfo) == -1) {
-        perror("Error reading variable information");
-        exit(3);
-    }
-}
 
-void initializeFrame(long long* screensize, int* fbfd, struct fb_var_screeninfo* vinfo, struct fb_fix_screeninfo* finfo) {
-    //Initialize Frame Information from Hardware Memory
+//RGB Data Structure
+typedef struct
+{
+    int r;
+    int g;
+    int b;
+} Color;
 
-    (*fbfd) = 0;
-    (*screensize) = 0;
+void getScreenInformation();
+void initializeFrame();
+void pixelBG(int height, int width, Color BGColor, char** fbp);
+void paintPixel(char *fbp);
 
-    // Open the file for reading and writing
-    (*fbfd) = open("/dev/fb0", O_RDWR);
-    if ((*fbfd) == -1) {
-        perror("Error: cannot open framebuffer device");
-        exit(1);
-    }
-    printf("The framebuffer device was opened successfully.\n");
+void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp); 
 
-    getScreenInformation((*fbfd), vinfo, finfo);
-
-    printf("%dx%d, %dbpp\n", (*vinfo).xres, (*vinfo).yres, (*vinfo).bits_per_pixel);
-
-    // Figure out the size of the screen in bytes
-    (*screensize) = (*vinfo).xres * (*vinfo).yres * (*vinfo).bits_per_pixel / 8;
-
-}
-
-void paintPixel(char *fbp, long long screensize, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo) {
-    //Procedure to paint the pixel for display
-
-    //Location
-    int x = 100, y = 100;
-    long int location = 0;
-    // Figure out where in memory to put the pixel
-    for (y = 100; y < 300; y++) {
-        for (x = 100; x < 300; x++) {
-            location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                       (y+vinfo.yoffset) * finfo.line_length;
-
-            if (vinfo.bits_per_pixel == 32) {
-                *(fbp + location) = 255;//100;        // Some blue
-                *(fbp + location + 1) = 255;//15+(x-100)/2;     // A little green
-                *(fbp + location + 2) = 255;//200-(y-100)/5;    // A lot of red
-                *(fbp + location + 3) = 0;      // No transparency
-            
-        //location += 4;
-            } else  { //assume 16bpp
-                int b = 10;
-                int g = (x-100)/6;     // A little green
-                int r = 31-(y-100)/16;    // A lot of red
-                unsigned short int t = r<<11 | g << 5 | b;
-                *((unsigned short int*)(fbp + location)) = t;
-            }
-        }
-    }
-    munmap(fbp, screensize);
-
-}
+//Global Frame Information
+int fbfd;
+struct fb_var_screeninfo vinfo;
+struct fb_fix_screeninfo finfo;
+long long screensize;
 
 int main()
 {
-    //Frame Information
-    int fbfd;
-    struct fb_var_screeninfo vinfo;
-    struct fb_fix_screeninfo finfo;
-    long long screensize;
 
 
     //Pixel Information
     //R, G, B, and Transparency FORMAT
     char *fbp = 0;
 
-    initializeFrame(&screensize, &fbfd, &vinfo, &finfo);
+    initializeFrame();
 
 
     // Map the device to program
@@ -100,8 +55,122 @@ int main()
     printf("The framebuffer device was mapped to memory successfully.\n");
 
     //Paint the pixel
-    paintPixel(fbp, screensize, vinfo, finfo);
+    paintPixel(fbp);
     
     close(fbfd);
     return 0;
 }
+
+void getScreenInformation() {
+    // Get fixed screen information
+    if (ioctl(fbfd, FBIOGET_FSCREENINFO, &finfo) == -1) {
+        perror("Error reading fixed information");
+        exit(2);
+    }
+
+    // Get variable screen information
+    if (ioctl(fbfd, FBIOGET_VSCREENINFO, &vinfo) == -1) {
+        perror("Error reading variable information");
+        exit(3);
+    }
+}
+
+void initializeFrame() {
+    //Initialize Frame Information from Hardware Memory
+
+    (fbfd) = 0;
+    (screensize) = 0;
+
+    // Open the file for reading and writing
+    (fbfd) = open("/dev/fb0", O_RDWR);
+    if ((fbfd) == -1) {
+        perror("Error: cannot open framebuffer device");
+        exit(1);
+    }
+    printf("The framebuffer device was opened successfully.\n");
+
+    getScreenInformation(fbfd);
+
+    printf("%dx%d, %dbpp\n", (vinfo).xres, (vinfo).yres, (vinfo).bits_per_pixel);
+
+    // Figure out the size of the screen in bytes
+    (screensize) = (vinfo).xres * (vinfo).yres * (vinfo).bits_per_pixel / 8;
+
+}
+
+void pixelBG(int height, int width, Color BGColor, char** fbp) {
+    //Get the pixel Screen and background color
+    //Location
+    int x, y;
+    long int location;
+    // Figure out where in memory to put the pixel
+    for (y = 100; y < 100 + height; y++) {
+        for (x = 100; x < 100 + width; x++) {
+            location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                       (y+vinfo.yoffset) * finfo.line_length;
+
+            if (vinfo.bits_per_pixel == 32) {
+                *((*fbp) + location) = BGColor.b;// Blue
+                *((*fbp) + location + 1) = BGColor.g;// Green
+                *((*fbp) + location + 2) = BGColor.r;// Red
+                *((*fbp) + location + 3) = 0;      // No transparency
+            
+        //location += 4;
+            } else  {
+                //ni kaga penting gausah dimengerti
+                int b = 10;
+                int g = (x-100)/6;     // A little green
+                int r = 31-(y-100)/16;    // A lot of red
+                unsigned short int t = r<<11 | g << 5 | b;
+                *((unsigned short int*)((*fbp) + location)) = t;
+            }
+        }
+    }
+
+
+}
+
+void paintPixel(char *fbp) {
+    //Procedure to paint the pixel for display
+
+    Color BGColor = {100, 100, 100};
+    Color pixelColor = {0, 0, 0};
+    Point points[] = {  {150, 150}, {151, 150}, {151, 151}, {150, 151},
+                        {152, 150}, {152, 151}, {153, 150}, {153, 151},
+                        {154, 150}, {154, 151}, {155, 150}, {155, 151}};
+
+    pixelBG(200, 200, BGColor, &fbp);
+    arrayPointToFBP(points, 12, pixelColor, &fbp);
+
+
+
+    munmap(fbp, screensize);
+
+}
+
+void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp) {
+    //Convert array of point to device FBP 
+
+    long int location;
+
+    for (int i = 0; i < N; ++i) {
+        location = (points[i].x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                       (points[i].y+vinfo.yoffset) * finfo.line_length;
+
+        if (vinfo.bits_per_pixel == 32) {
+                *((*fbp) + location) = pixelColor.b;// Blue
+                *((*fbp) + location + 1) = pixelColor.g;// Green
+                *((*fbp) + location + 2) = pixelColor.r;// Red
+                *((*fbp) + location + 3) = 0;      // No transparency
+            
+        //location += 4;
+            } else  {
+                //ni kaga penting gausah dimengerti
+                int b = 10;
+                int g = (points[i].x-100)/6;     // A little green
+                int r = 31-(points[i].y-100)/16;    // A lot of red
+                unsigned short int t = r<<11 | g << 5 | b;
+                *((unsigned short int*)((*fbp) + location)) = t;
+            }
+    }
+} 
