@@ -1,8 +1,10 @@
 # Credit-Pixel-Generator
 
 ## How to run
-1. Open Cmmand prompt and compile the file
-2. Open XWIndows in linux terminal
-3. run the file using sudo
+
+1. Download the pixel.xls
+2. run "python xlsconverter.py" command
+3. run make in cmd
+4. open Xwindows and run with sudo command
 
 ## Created by Thareq

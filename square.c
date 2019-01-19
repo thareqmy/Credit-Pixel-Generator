@@ -5,22 +5,7 @@
 #include <linux/fb.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
-
-//Point Data Structure
-typedef struct
-{
-    int x;
-    int y;
-} Point;
-
-
-//RGB Data Structure
-typedef struct
-{
-    int r;
-    int g;
-    int b;
-} Color;
+#include "point.h"
 
 void getScreenInformation();
 void initializeFrame();
@@ -28,6 +13,7 @@ void pixelBG(int height, int width, Color BGColor, char** fbp);
 void paintPixel(char *fbp);
 
 void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp); 
+
 
 //Global Frame Information
 int fbfd;
@@ -135,9 +121,28 @@ void paintPixel(char *fbp) {
 
     Color BGColor = {100, 100, 100};
     Color pixelColor = {0, 0, 0};
-    Point points[] = {  {150, 150}, {151, 150}, {151, 151}, {150, 151},
-                        {152, 150}, {152, 151}, {153, 150}, {153, 151},
-                        {154, 150}, {154, 151}, {155, 150}, {155, 151}};
+    Point apoints[625];
+    Point bpoints[625];
+
+    int count = 0;
+    for (int i = 5; i < 25; i++) {
+        for (int j = 0; j < 5; j++) {
+            apoints[count] = {i, j};
+            count++;
+        }
+    }
+    for (int i = 0; i < 5; i++) {
+        for (int j = 5; j < 15; j++) {
+            apoints[count] = {i, j};
+            count++;
+        }
+    }    
+    for (int i = 5; i < 25; i++) {
+        for (int j = 0; j < 5; j++) {
+            apoints[count] = {i, j};
+            count++;
+        }
+    }
 
     pixelBG(200, 200, BGColor, &fbp);
     arrayPointToFBP(points, 12, pixelColor, &fbp);
@@ -147,7 +152,6 @@ void paintPixel(char *fbp) {
     munmap(fbp, screensize);
 
 }
-
 void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp) {
     //Convert array of point to device FBP 
 
