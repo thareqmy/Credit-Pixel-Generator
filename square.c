@@ -7,6 +7,8 @@
 #include <sys/ioctl.h>
 #include "point.h"
 
+
+
 void getScreenInformation();
 void initializeFrame();
 void pixelBG(int height, int width, Color BGColor, char** fbp);
@@ -20,6 +22,10 @@ int fbfd;
 struct fb_var_screeninfo vinfo;
 struct fb_fix_screeninfo finfo;
 long long screensize;
+int xLoc;
+int yLoc;
+int currLoc;
+
 
 int main()
 {
@@ -42,6 +48,8 @@ int main()
 
     //Paint the pixel
     paintPixel(fbp);
+
+    printf("The memory was painted to display successfully.\n");
     
     close(fbfd);
     return 0;
@@ -90,8 +98,8 @@ void pixelBG(int height, int width, Color BGColor, char** fbp) {
     int x, y;
     long int location;
     // Figure out where in memory to put the pixel
-    for (y = 100; y < 100 + height; y++) {
-        for (x = 100; x < 100 + width; x++) {
+    for (y = yLoc; y < yLoc + height; y++) {
+        for (x = xLoc; x < xLoc + width; x++) {
             location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
                        (y+vinfo.yoffset) * finfo.line_length;
 
@@ -117,35 +125,24 @@ void pixelBG(int height, int width, Color BGColor, char** fbp) {
 }
 
 void paintPixel(char *fbp) {
+    xLoc = 800;
+    yLoc = 100;
+    currLoc = 5;
+
+
     //Procedure to paint the pixel for display
 
     Color BGColor = {100, 100, 100};
-    Color pixelColor = {0, 0, 0};
-    Point apoints[625];
-    Point bpoints[625];
+    Color pixelColor = {255, 255, 255};
+    char c[] = {'A','A','B','A','B','B'};
+    int N;
 
-    int count = 0;
-    for (int i = 5; i < 25; i++) {
-        for (int j = 0; j < 5; j++) {
-            apoints[count] = {i, j};
-            count++;
-        }
-    }
-    for (int i = 0; i < 5; i++) {
-        for (int j = 5; j < 15; j++) {
-            apoints[count] = {i, j};
-            count++;
-        }
-    }    
-    for (int i = 5; i < 25; i++) {
-        for (int j = 0; j < 5; j++) {
-            apoints[count] = {i, j};
-            count++;
-        }
-    }
 
     pixelBG(200, 200, BGColor, &fbp);
-    arrayPointToFBP(points, 12, pixelColor, &fbp);
+    for (int i = 0; i<6; i++) {
+        Point* p = charToPoints(c[i], &N);
+        arrayPointToFBP(p, N, pixelColor, &fbp);
+    }
 
 
 
@@ -158,8 +155,8 @@ void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp) {
     long int location;
 
     for (int i = 0; i < N; ++i) {
-        location = (points[i].x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                       (points[i].y+vinfo.yoffset) * finfo.line_length;
+        location = (points[i].x+vinfo.xoffset + xLoc + currLoc) * (vinfo.bits_per_pixel/8) +
+                       (points[i].y+vinfo.yoffset + yLoc + 5) * finfo.line_length;
 
         if (vinfo.bits_per_pixel == 32) {
                 *((*fbp) + location) = pixelColor.b;// Blue
@@ -177,4 +174,5 @@ void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp) {
                 *((unsigned short int*)((*fbp) + location)) = t;
             }
     }
+    currLoc += 30;
 } 

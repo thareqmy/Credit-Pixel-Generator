@@ -1,2 +1,2 @@
-square: square.c point.c
-	gcc -o square square.c point.c -I.
+square: point.c square.c
+	gcc -o square point.c square.c -I.
