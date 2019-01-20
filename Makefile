@@ -1,2 +1,2 @@
-square: point.c square.c
-	gcc -o square point.c square.c -I.
+square: point.c color.c frame.c square.c
+	gcc -o square point.c color.c frame.c square.c -I.
