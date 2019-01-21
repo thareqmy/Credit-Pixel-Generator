@@ -11,9 +11,19 @@
 #include "color.h"
 #include "frame.h"
 
+void getScreenInformation();
+void initializeFrame();
+void pixelBG(int height, int width, Color BGColor, char** fbp);
+void paintPixel(char *fbp);
 
-void pixelBG(int height, int width, Color BGColor, Frame* f);
-void paintPixel(Frame *f);
+void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp); 
+
+
+//Global Frame Information
+int fbfd;
+struct fb_var_screeninfo vinfo;
+struct fb_fix_screeninfo finfo;
+long long screensize;
 
 int main()
 {
@@ -37,128 +47,79 @@ int main()
     printf("The framebuffer device was mapped to memory successfully.\n");
 
     //Paint the pixel
-    paintPixel(&currFrame);
 
-    printf("The memory was painted to display successfully.\n");
-    
-    close(currFrame.fbfd);
-    //ioctl(tty_fd,KDSETMODE,KD_TEXT);
-    return 0;
+    paintPixel(fbp);
+    for (y = 100; y < 100 + height; y++) {
+        for (x = 100; x < 100 + width; x++) {
+            location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                       (y+vinfo.yoffset) * finfo.line_length;
+
+            if (vinfo.bits_per_pixel == 32) {
+                *((*fbp) + location) = BGColor.b;// Blue
+                *((*fbp) + location + 1) = BGColor.g;// Green
+                *((*fbp) + location + 2) = BGColor.r;// Red
+                *((*fbp) + location + 3) = 0;      // No transparency
+
+
+void paintPixel(char *fbp) {
+    //Procedure to paint the pixel for display
+
+    Color BGColor = {100, 100, 100};
+    Color pixelColor = {0, 0, 0};
+    Point apoints[625];
+    Point bpoints[625];
+
+    int count = 0;
+    for (int i = 5; i < 25; i++) {
+        for (int j = 0; j < 5; j++) {
+            apoints[count] = {i, j};
+            count++;
+        }
+    }
+    for (int i = 0; i < 5; i++) {
+        for (int j = 5; j < 15; j++) {
+            apoints[count] = {i, j};
+            count++;
+        }
+    }    
+    for (int i = 5; i < 25; i++) {
+        for (int j = 0; j < 5; j++) {
+            apoints[count] = {i, j};
+            count++;
+        }
+    }
+
+    pixelBG(200, 200, BGColor, &fbp);
+    arrayPointToFBP(points, 12, pixelColor, &fbp);
+
+
+
+    munmap(fbp, screensize);
+
 }
+void arrayPointToFBP(Point* points, int N, Color pixelColor, char** fbp) {
+    //Convert array of point to device FBP 
 
-void pixelBG(int height, int width, Color BGColor, Frame* f) {
-    //Get the pixel Screen and background color
-    //Location
-    int x, y;
     long int location;
-    // Figure out where in memory to put the pixel
-    for (y = (*f).yLoc; y < (*f).yLoc + height; y++) {
-        for (x = (*f).xLoc; x < (*f).xLoc + width; x++) {
-            location = (x+(*f).vinfo.xoffset) * ((*f).vinfo.bits_per_pixel/8) +
-                       (y+(*f).vinfo.yoffset) * (*f).finfo.line_length;
 
-            if ((*f).vinfo.bits_per_pixel == 32) {
-                *(((*f).fbp) + location) = BGColor.b;// Blue
-                *(((*f).fbp) + location + 1) = BGColor.g;// Green
-                *(((*f).fbp) + location + 2) = BGColor.r;// Red
-                *(((*f).fbp) + location + 3) = 0;      // No transparency
+    for (int i = 0; i < N; ++i) {
+        location = (points[i].x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
+                       (points[i].y+vinfo.yoffset) * finfo.line_length;
+
+        if (vinfo.bits_per_pixel == 32) {
+                *((*fbp) + location) = pixelColor.b;// Blue
+                *((*fbp) + location + 1) = pixelColor.g;// Green
+                *((*fbp) + location + 2) = pixelColor.r;// Red
+                *((*fbp) + location + 3) = 0;      // No transparency
             
         //location += 4;
             } else  {
                 //ni kaga penting gausah dimengerti
                 int b = 10;
-                int g = (x-100)/6;     // A little green
-                int r = 31-(y-100)/16;    // A lot of red
+                int g = (points[i].x-100)/6;     // A little green
+                int r = 31-(points[i].y-100)/16;    // A lot of red
                 unsigned short int t = r<<11 | g << 5 | b;
-                *((unsigned short int*)(((*f).fbp) + location)) = t;
+                *((unsigned short int*)((*fbp) + location)) = t;
             }
-        }
     }
-
-
-}
-
-void paintPixel(Frame* f) {
-    (*f).xLoc = 800;
-    (*f).yLoc = 100;
-    (*f).currLoc = 5;
-
-
-    //Procedure to paint the pixel for display
-
-    Color BGColor = {100, 100, 100};
-    Color paintPixel;
-    pixelBG(200, 200, BGColor, f);
-
-    char a[] = {'T','H','A','R','E', 'Q'};
-    char b[] = {'A', 'U', 'L', 'Y'};
-    char c[] = {'A', 'Z', 'K', 'I'};
-    char d[] = {'Y', 'A', 'S', 'Y', 'A'};
-    char e[] = {'F', 'A','D', 'H', 'R', 'I', 'G', 'A'};
-    char h[] = {'R', 'I', 'N', 'D'};
-    char g[] = {'Z', 'O', 'K', 'O'};
-    int N;
-    int j = 0;
-
-    
-        paintPixel = randomRBG();
-        while(a[j] != '\0') {
-            Point* p = charToPoints(a[j], &N);
-            arrayPointToFBP(p, N, paintPixel, f);
-            j++;
-        }
-        
-        (*f).currLoc = 5;
-        (*f).yLoc += 30;
-        paintPixel = randomRBG();
-        j = 0;
-        while(b[j] != '\0') {
-            Point* p = charToPoints(b[j], &N);
-            arrayPointToFBP(p, N, paintPixel, f);
-            j++;
-        }
-        (*f).currLoc = 5;
-        (*f).yLoc += 30;
-        paintPixel = randomRBG();
-        for (int j = 0; j < strlen(c); j++) {
-            Point* p = charToPoints(c[j], &N);
-            arrayPointToFBP(p, N, paintPixel, f);
-        }
-        (*f).currLoc = 5;
-        (*f).yLoc += 30;
-        paintPixel = randomRBG();
-        for (int j = 0; j < strlen(d); j++) {
-            Point* p = charToPoints(d[j], &N);
-            arrayPointToFBP(p, N, paintPixel, f);
-            printf("sasdkk\n");
-        }
-        printf("sasdjj\n");
-        (*f).currLoc = 5;
-        (*f).yLoc += 30;
-        paintPixel = randomRBG();
-        for (int j = 0; j < strlen(e); j++) {
-            Point* p = charToPoints(e[j], &N);
-            arrayPointToFBP(p, N, paintPixel, f);
-        }
-        (*f).currLoc = 5;
-        (*f).yLoc += 30;
-        paintPixel = randomRBG();
-        for (int j = 0; j < strlen(h); j++) {
-            Point* p = charToPoints(h[j], &N);
-            arrayPointToFBP(p, N, paintPixel, f);
-        }
-        (*f).currLoc = 5;
-        (*f).yLoc += 30;
-        paintPixel = randomRBG();
-        for (int j = 0; j < strlen(g); j++) {
-            Point* p = charToPoints(g[j], &N);
-            arrayPointToFBP(p, N, paintPixel, f);
-        }
-        (*f).currLoc = 5;
-        (*f).yLoc += 30;
-    
-
-
-   munmap((*f).fbp, (*f).screensize);
-
-}
+} 

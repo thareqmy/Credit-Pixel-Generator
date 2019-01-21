@@ -9,8 +9,6 @@ typedef struct
 } Point;
 
 //Read file for a certai char and convert it to array point
-Point* charToPoints(char c, int* N);
-int charToInt(char* c, int N);
-
+Point* charToPoints(char c);
 
 #endif
