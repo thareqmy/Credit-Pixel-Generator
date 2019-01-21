@@ -21,6 +21,8 @@ void initializeFrame(Frame *f) {
     ((*f).screensize) = 0;
 
     // Open the file for reading and writing
+    
+
     ((*f).fbfd) = open("/dev/fb0", O_RDWR);
     if (((*f).fbfd) == -1) {
         perror("Error: cannot open framebuffer device");
@@ -37,11 +39,13 @@ void initializeFrame(Frame *f) {
 
 }
 void arrayPointToFBP(Point* points, int N, Color pixelColor, Frame *f) {
+
 	//Convert array of point to device FBP 
 
     long int location;
 
     for (int i = 0; i < N; ++i) {
+    	
         location = (points[i].x+((*f).vinfo).xoffset + (*f).xLoc + (*f).currLoc) * ((*f).vinfo.bits_per_pixel/8) +
                        (points[i].y+(*f).vinfo.yoffset + (*f).yLoc + 5) * (*f).finfo.line_length;
 
@@ -53,6 +57,7 @@ void arrayPointToFBP(Point* points, int N, Color pixelColor, Frame *f) {
             
         //location += 4;
             } else  {
+
                 //ni kaga penting gausah dimengerti
                 int b = 10;
                 int g = (points[i].x-100)/6;     // A little green
@@ -61,5 +66,6 @@ void arrayPointToFBP(Point* points, int N, Color pixelColor, Frame *f) {
                 *((unsigned short int*)(((*f).fbp) + location)) = t;
             }
     }
+
     (*f).currLoc += 30;
 } 

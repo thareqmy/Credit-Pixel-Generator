@@ -5,6 +5,8 @@
 #include <linux/fb.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <sys/kd.h>
+#include <string.h>
 #include "point.h"
 #include "color.h"
 #include "frame.h"
@@ -21,6 +23,8 @@ int main()
     //R, G, B, and Transparency FORMAT
     Frame currFrame;
 
+    //int tty_fd = open("/dev/tty0", O_RDWR);
+    //ioctl(tty_fd,KDSETMODE,KD_GRAPHICS);
     initializeFrame(&currFrame);
 
 
@@ -38,6 +42,7 @@ int main()
     printf("The memory was painted to display successfully.\n");
     
     close(currFrame.fbfd);
+    //ioctl(tty_fd,KDSETMODE,KD_TEXT);
     return 0;
 }
 
@@ -82,21 +87,78 @@ void paintPixel(Frame* f) {
     //Procedure to paint the pixel for display
 
     Color BGColor = {100, 100, 100};
+    Color paintPixel;
     pixelBG(200, 200, BGColor, f);
 
-    Color pixelColor = {255, 255, 255};
-    char c[] = {'T','H','A','R','E','Q'};
+    char a[] = {'T','H','A','R','E', 'Q'};
+    char b[] = {'A', 'U', 'L', 'Y'};
+    char c[] = {'A', 'Z', 'K', 'I'};
+    char d[] = {'Y', 'A', 'S', 'Y', 'A'};
+    char e[] = {'F', 'A','D', 'H', 'R', 'I', 'G', 'A'};
+    char h[] = {'R', 'I', 'N', 'D'};
+    char g[] = {'Z', 'O', 'K', 'O'};
     int N;
-
+    int j = 0;
 
     
-    for (int i = 0; i<6; i++) {
-        Point* p = charToPoints(c[i], &N);
-        arrayPointToFBP(p, N, pixelColor, f);
-    }
+        paintPixel = randomRBG();
+        while(a[j] != '\0') {
+            Point* p = charToPoints(a[j], &N);
+            arrayPointToFBP(p, N, paintPixel, f);
+            j++;
+        }
+        
+        (*f).currLoc = 5;
+        (*f).yLoc += 30;
+        paintPixel = randomRBG();
+        j = 0;
+        while(b[j] != '\0') {
+            Point* p = charToPoints(b[j], &N);
+            arrayPointToFBP(p, N, paintPixel, f);
+            j++;
+        }
+        (*f).currLoc = 5;
+        (*f).yLoc += 30;
+        paintPixel = randomRBG();
+        for (int j = 0; j < strlen(c); j++) {
+            Point* p = charToPoints(c[j], &N);
+            arrayPointToFBP(p, N, paintPixel, f);
+        }
+        (*f).currLoc = 5;
+        (*f).yLoc += 30;
+        paintPixel = randomRBG();
+        for (int j = 0; j < strlen(d); j++) {
+            Point* p = charToPoints(d[j], &N);
+            arrayPointToFBP(p, N, paintPixel, f);
+            printf("sasdkk\n");
+        }
+        printf("sasdjj\n");
+        (*f).currLoc = 5;
+        (*f).yLoc += 30;
+        paintPixel = randomRBG();
+        for (int j = 0; j < strlen(e); j++) {
+            Point* p = charToPoints(e[j], &N);
+            arrayPointToFBP(p, N, paintPixel, f);
+        }
+        (*f).currLoc = 5;
+        (*f).yLoc += 30;
+        paintPixel = randomRBG();
+        for (int j = 0; j < strlen(h); j++) {
+            Point* p = charToPoints(h[j], &N);
+            arrayPointToFBP(p, N, paintPixel, f);
+        }
+        (*f).currLoc = 5;
+        (*f).yLoc += 30;
+        paintPixel = randomRBG();
+        for (int j = 0; j < strlen(g); j++) {
+            Point* p = charToPoints(g[j], &N);
+            arrayPointToFBP(p, N, paintPixel, f);
+        }
+        (*f).currLoc = 5;
+        (*f).yLoc += 30;
+    
 
 
-
-    munmap((*f).fbp, (*f).screensize);
+   munmap((*f).fbp, (*f).screensize);
 
 }
