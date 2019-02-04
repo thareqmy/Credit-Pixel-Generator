@@ -101,42 +101,6 @@ int main()
             }
 
         }
-        fp = fopen("name.txt", "r");
-    while(!feof(fp)) {
-    	
-    	fscanf(fp, "%d", &x);
-    	fscanf(fp, "%d", &y);
-
-    	int BASE = 4;
-
-    	for (int i = x * BASE + 25; i < (x + 1) * BASE + 25; i++) {
-    		for (int j = y * BASE + 25 + curr; j < (y + 1) * BASE + 25 + curr; j++) {
-    			
-                if((i > 25 && i < 750) && (j > 25 && j < 1500)) {
-
-                location = (i+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-                       (j+vinfo.yoffset) * finfo.line_length;
-
-            if (vinfo.bits_per_pixel == 32) {
-                *(fbp + location) = 0;        // Some blue
-                *(fbp + location + 1) = rand() % 255;     // A little green
-                *(fbp + location + 2) = rand() % 255;    // A lot of red
-                *(fbp + location + 3) = rand() % 255;      // No transparency
-        //location += 4;
-            } else  { //assume 16bpp
-                int b = 10;
-                int g = (x-100)/6;     // A little green
-                int r = 31-(y-100)/16;    // A lot of red
-                unsigned short int t = r<<11 | g << 5 | b;
-                *((unsigned short int*)(fbp + location)) = t;
-            }
-    		}
-        }
-    	}
-        
-
-    	
-    }
     curr+=20;
     usleep(1000000);
     }

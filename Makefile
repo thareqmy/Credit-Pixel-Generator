@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-square: point.c color.c frame.c square.c
-	gcc -o square point.c color.c frame.c square.c -I.
-=======
-square: square.c point.c
-	gcc -o square square.c point.c -I.
->>>>>>> parent of 3ffac8e... generate words to frame
+engine: engine.cpp Point.cpp Color.cpp Frame.cpp
+	g++ -o engine Point.cpp Color.cpp Frame.cpp engine.cpp -lpthread -I.
+
