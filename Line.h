@@ -9,7 +9,7 @@ class Line {
 public:
 	//ATR
 	Point p1;
-	Point p1;
+	Point p2;
 	//CONS
 
 	//CREATE CONS USING POINT
