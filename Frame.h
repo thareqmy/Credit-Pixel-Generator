@@ -43,7 +43,11 @@ public:
 
 	Frame();
 	long long getLocationOnFrame(int x, int y);	
+	long long getLocationOnFrame(Point p);
 	void createBackground(Color c);
+	void inputFBP(long long loc, Color c);
+	//Pixel FBPToPixel(Point);
+	//Pixel FBPToPixel(int x,int y);
 
 
 };

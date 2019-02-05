@@ -51,30 +51,51 @@ long long Frame::getLocationOnFrame(int x, int y) {
     return((x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y+vinfo.yoffset) * finfo.line_length);
 
 }
+long long Frame::getLocationOnFrame(Point p) {
+    return((p.x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (p.y+vinfo.yoffset) * finfo.line_length);
 
+}
 void Frame::createBackground(Color c) {
     for (int i = XMIN ; i < XMAX; i++) {
         for (int j = YMIN ; j < YMAX; j++) {
             
-            
-            long long location = getLocationOnFrame(i,j);
-
-            
-
-            if (vinfo.bits_per_pixel == 32) {
-                *(fbp + location) = c.b;        // Some blue
-                *(fbp + location + 1) = c.g;     // A little green
-                *(fbp + location + 2) = c.r;    // A lot of red
-                *(fbp + location + 3) = 0;      // No transparency
-        //location += 4;
-            } else  { //assume 16bpp
-                int b = 10;
-                int g = (i-100)/6;     // A little green
-                int r = 31-(j-100)/16;    // A lot of red
-                unsigned short int t = c.r<<11 | c.g << 5 | c.b;
-                *((unsigned short int*)(fbp + location)) = t;
-            }
+        long long location = getLocationOnFrame(i,j);        
+        inputFBP(location,c);
 
         }
     }
 }
+
+void Frame::inputFBP(long long loc, Color c) {
+    
+
+            
+
+    if (vinfo.bits_per_pixel == 32) {
+        *(fbp + loc) = c.b;        // Some blue
+        *(fbp + loc + 1) = c.g;     // A little green
+        *(fbp + loc + 2) = c.r;    // A lot of red
+        *(fbp + loc + 3) = 0;      // No transparency
+        //location += 4;
+    } else  { //assume 16bpp
+        int b = 10;
+        int g = (100)/6;     // A little green
+        int r = 31-(100)/16;    // A lot of red
+        unsigned short int t = c.r<<11 | c.g << 5 | c.b;
+        *((unsigned short int*)(fbp + loc)) = t;
+    }
+}
+/*
+Pixel Frame::FBPToPixel(Point p) {
+    long long loc = getLocationOnFrame(p);
+    Color c(*(fbp + loc + 2), *(fbp + loc + 1) , *(fbp + loc));
+    Pixel pp(p, c);
+    return pp;
+
+}
+Pixel Frame::FBPToPixel(int x,int y) {
+    long long loc = getLocationOnFrame(x, y);
+    ;
+    Pixel pp(x, y, *(fbp + loc + 2), *(fbp + loc + 1) , *(fbp + loc));
+    return pp;
+}*/
