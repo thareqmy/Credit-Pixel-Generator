@@ -11,6 +11,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include "Frame.h"
+#include "Line.h"
 #include <stdint.h>
 
 
@@ -38,6 +39,8 @@ threadInfo_t threads[] = {
 };
 
   int h = 0;
+  Color bgc(255,255,255);
+  Line l1(30, 30, 800, 800);
 
 void *service(void *arg) {
 
@@ -65,8 +68,9 @@ void *service(void *arg) {
 
             }
 
-            Color c(h,0,0);
-            f.createBackground(c);
+            Color c(0,0,h);
+            f.createBackground(bgc);
+            f.lineToFrame(c, l1);
         }
         // ⇓ usleep() probably more practical as 1-sec too long for most cases
                                  // sleep so we don't loop too fast eating CPU

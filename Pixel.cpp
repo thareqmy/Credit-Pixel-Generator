@@ -1,4 +1,4 @@
-#include "Frame.h"
+
 #include "Pixel.h"
 
 Pixel::Pixel() {
@@ -20,9 +20,4 @@ Pixel::Pixel(int x, int y, int r, int g, int b) {
 	PColor.r = r;
 	PColor.b = b;
 	PColor.g = g;
-}
-void Pixel::pixelToFrame(Frame *f) {
-
-        long long location = (*f).getLocationOnFrame(PPoint);        
-        (*f).inputFBP(location,PColor);
 }

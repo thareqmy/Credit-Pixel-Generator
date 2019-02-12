@@ -85,6 +85,42 @@ void Frame::inputFBP(long long loc, Color c) {
         *((unsigned short int*)(fbp + loc)) = t;
     }
 }
+
+void Frame::pixelToFrame(Pixel pi) {
+    long long location = getLocationOnFrame(pi.PPoint);        
+    inputFBP(location,pi.PColor);
+}
+
+void Frame::lineToFrame(Color c, Line l) {
+    int N;
+    Point* p = l.getArrayOfPoints(&N);
+    for (int i = 0; i < N; i++) {
+        Pixel pi(p[i], c);
+        pixelToFrame(pi);
+    }
+}
+
+Pixel Frame::getPixelFromLoc(int x, int y) {
+    long long loc = getLocationOnFrame(x, y);
+    Color cLoc;
+    Point pLoc(x,y);
+    cLoc.b = *(fbp + loc);
+    cLoc.g = *(fbp + loc + 1);
+    cLoc.r = *(fbp + loc + 2);
+    Pixel piLoc(pLoc, cLoc);
+    return piLoc;
+
+}
+
+bool Frame::isPixelOccupied(int x, int y, Color occupiedColor) {
+    Pixel piLoc = getPixelFromLoc(x, y);
+    if (piLoc.PColor.r == occupiedColor.r && piLoc.PColor.g == occupiedColor.g && occupiedColor.b == piLoc.PColor.b) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 /*
 Pixel Frame::FBPToPixel(Point p) {
     long long loc = getLocationOnFrame(p);

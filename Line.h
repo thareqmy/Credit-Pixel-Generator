@@ -2,6 +2,7 @@
 #define LINE_H_
 #include "Point.h"
 #include "Color.h"
+#include "Pixel.h"
 //#include "Frame.h"
 
 //Pixel Data Structure
@@ -13,6 +14,7 @@ public:
 	//CONS
 
 	//CREATE CONS USING POINT
+	Line();
 	Line(Point p1, Point p2);
 	//CREATE CONS USING 4 INT as Point
 	Line(int x1, int y1, int x2, int y2);
@@ -21,7 +23,8 @@ public:
 	double getGradient();
 
 	//convert line to points using bresenham
-	Point* getArrayOfPoints();
+	Point* getArrayOfPoints(int* N);
+
 
 
 

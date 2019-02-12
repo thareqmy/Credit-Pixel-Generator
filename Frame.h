@@ -10,6 +10,8 @@
 #include <sys/ioctl.h>
 #include "Point.h"
 #include "Color.h"
+#include "Pixel.h"
+#include "Line.h"
 
 #define XMAX 1300
 #define YMAX 700
@@ -46,6 +48,10 @@ public:
 	long long getLocationOnFrame(Point p);
 	void createBackground(Color c);
 	void inputFBP(long long loc, Color c);
+	void pixelToFrame(Pixel);
+	void lineToFrame(Color, Line);
+	Pixel getPixelFromLoc(int x, int y);
+	bool isPixelOccupied(int x, int y, Color occupiedColor);
 	//Pixel FBPToPixel(Point);
 	//Pixel FBPToPixel(int x,int y);
 
