@@ -10,7 +10,6 @@
 #include <linux/fb.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
-#include <curses.h>
 #include "Frame.h"
 #include <stdint.h>
 

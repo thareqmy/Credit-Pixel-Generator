@@ -56,8 +56,8 @@ long long Frame::getLocationOnFrame(Point p) {
 
 }
 void Frame::createBackground(Color c) {
-    for (int i = XMIN ; i < XMAX; i++) {
-        for (int j = YMIN ; j < YMAX; j++) {
+    for (int i = 11 ; i < vinfo.xres - 10 ; i++) {
+        for (int j = 11 ; j < vinfo.yres - 10; j++) {
             
         long long location = getLocationOnFrame(i,j);        
         inputFBP(location,c);
