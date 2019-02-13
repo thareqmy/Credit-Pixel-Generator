@@ -1,4 +1,5 @@
 #include "Line.h"
+#include <cmath>
 
 //CREATE CONS USING POINT
 Line::Line(Point p1, Point p2) {
@@ -22,7 +23,13 @@ Line::Line(int x1, int y1, int x2, int y2){
 
 	//METHOD
 double Line::getGradient() {
-	double m = (p2.y-p1.y) / (p2.x- p1.x);
+	double m;
+	if ((p1.y==p2.y) or (p2.x == p1.x)){
+		m = 1;
+	}else{
+		m = (p2.y-p1.y) / (p2.x- p1.x);
+	}
+	
 	return m;
 }
 
@@ -35,10 +42,12 @@ Point* Line::getArrayOfPoints(int* N) {
 	if (m <= 1) {
 		int xmin = p1.x;
 		int xmax = p2.x;
-		ptr = new Point[p2.x-p1.x];
+		ptr = new Point[200];
 		int j = 0;
 		for (int i = xmin; i <= xmax; i++) {
-			int y = (i*(p2.y-p1.y) - p1.x*(p2.y-p1.y) + p1.y*(p2.x-p1.x)) / (p2.x-p1.x);
+			
+			// int y = int(round((i*(p2.y-p1.y) - p1.x*(p2.y-p1.y) + p1.y*(p2.x-p1.x)) / (p2.x-p1.x)));
+			int y= 0;
 			Point a(i,y);
 			ptr[j].x = a.x;
 			ptr[j].y = a.y;
@@ -51,7 +60,8 @@ Point* Line::getArrayOfPoints(int* N) {
 		ptr = new Point[p2.y-p1.y];
 		int j = 0;
 		for (int i = ymin; i <= ymax; i++) {
-			int x = (i*(p2.x-p1.x) - p1.y*(p2.x-p1.x) + p1.x*(p2.y-p1.y)) / (p2.y-p1.y);
+			// int x = int(round((i*(p2.x-p1.x) - p1.y*(p2.x-p1.x) + p1.x*(p2.y-p1.y)) / (p2.y-p1.y)));
+			int x =0;
 			Point a(x,i);
 			ptr[j].x = a.x;
 			ptr[j].y = a.y;
