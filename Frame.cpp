@@ -120,6 +120,15 @@ bool Frame::isPixelOccupied(int x, int y, Color occupiedColor) {
         return false;
     }
 }
+void Frame::plane2DToFrame(Color c, Plane2D pl) {
+    int N;
+    Point* p = pl.points;
+    for (int i = 0; i < pl.pSize; i++) {
+        Pixel pi(p[i], c);
+        pixelToFrame(pi);
+    }
+    printf("%d", pl.pSize);
+}
 
 /*
 Pixel Frame::FBPToPixel(Point p) {

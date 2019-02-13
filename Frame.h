@@ -12,6 +12,7 @@
 #include "Color.h"
 #include "Pixel.h"
 #include "Line.h"
+#include "Plane2D.h"
 
 #define XMAX 1300
 #define YMAX 700
@@ -52,6 +53,8 @@ public:
 	void lineToFrame(Color, Line);
 	Pixel getPixelFromLoc(int x, int y);
 	bool isPixelOccupied(int x, int y, Color occupiedColor);
+	void plane2DToFrame(Color c, Plane2D pl);
+
 	//Pixel FBPToPixel(Point);
 	//Pixel FBPToPixel(int x,int y);
 

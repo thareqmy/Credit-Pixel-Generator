@@ -13,6 +13,7 @@
 #include "Frame.h"
 #include "Line.h"
 #include <stdint.h>
+#include <iostream>
 
 
 
@@ -41,9 +42,12 @@ threadInfo_t threads[] = {
   int h = 0;
   Color bgc(255,255,255);
   Line l1(30, 30, 800, 800);
+  Plane2D pesawat("40479_plane3d.txt");
 
 void *service(void *arg) {
 
+    std::cout << "Uhiug";
+    while(1<2) {}
     char key;
 
     threadInfo_t *t = &threads[(int64_t)arg];    // get pointer to thread
@@ -71,6 +75,7 @@ void *service(void *arg) {
             Color c(0,0,h);
             f.createBackground(bgc);
             f.lineToFrame(c, l1);
+            f.plane2DToFrame(c, pesawat);
         }
         // ⇓ usleep() probably more practical as 1-sec too long for most cases
                                  // sleep so we don't loop too fast eating CPU
