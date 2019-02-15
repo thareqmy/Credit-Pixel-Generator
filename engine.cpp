@@ -36,18 +36,18 @@ static struct termios origtc, newtc;
 
 
 threadInfo_t threads[] = { 
-    { 0, PTHREAD_MUTEX_INITIALIZER, { NULL, '\0' }, "asd", "Thread T1" }
+    { 0, PTHREAD_MUTEX_INITIALIZER, { NULL, '\0' }, "asdw", "Thread T1" }
 };
 
   int h = 0;
+  int g = 0;
   Color bgc(255,255,255);
   Line l1(30, 30, 800, 800);
-  Plane2D pesawat("40479_plane3d.txt");
+  //Plane2D pesawat("40479_plane3d.txt");
 
 void *service(void *arg) {
 
-    std::cout << "Uhiug";
-    while(1<2) {}
+    
     char key;
 
     threadInfo_t *t = &threads[(int64_t)arg];    // get pointer to thread
@@ -70,12 +70,28 @@ void *service(void *arg) {
             //printf("... %s pulled key '%c' from queue\n", t->name, key);
 
 
+            } else if (key == 's') {
+                g+=10;
+            } else if (key == 'w') {
+                g-=10;
             }
 
+
             Color c(0,0,h);
+
+            
+            
             f.createBackground(bgc);
-            f.lineToFrame(c, l1);
-            f.plane2DToFrame(c, pesawat);
+            for (int i = 0 ;i < 10; i++){
+                for (int j = 0; j < 10; j++) {
+                    Pixel pix(300 + i + h, 600 + j + g, 0, 255, 0);
+                    f.pixelToFrame(pix);
+                }
+            }
+            //f.lineToFrame(c, l1);
+            //f.plane2DToFrame(c, pesawat);
+        } else {
+
         }
         // ⇓ usleep() probably more practical as 1-sec too long for most cases
                                  // sleep so we don't loop too fast eating CPU

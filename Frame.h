@@ -33,12 +33,7 @@ public:
 	
 	//Frame size
 	long long screensize;
-	
 
-	//Esential information for frame
-	int xLoc;
-	int yLoc;
-	int currLoc;
 	
 	//Where the pixel information mapped
 	char* fbp;

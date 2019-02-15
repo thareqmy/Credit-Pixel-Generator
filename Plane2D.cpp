@@ -36,8 +36,7 @@ Plane2D::Plane2D(char* filename) {
     	}
     	lSize++;
 	}
-	std::cout << "Uhiug";
-    while(1<2) {}
+	
 }
 
 Plane2D::Plane2D() {
