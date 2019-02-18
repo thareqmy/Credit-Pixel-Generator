@@ -1,9 +1,6 @@
 #ifndef LINE_H_
 #define LINE_H_
 #include "Point.h"
-#include "Color.h"
-#include "Pixel.h"
-//#include "Frame.h"
 
 //Pixel Data Structure
 class Line {
@@ -24,11 +21,6 @@ public:
 
 	//convert line to points using bresenham
 	Point* getArrayOfPoints(int* N);
-
-
-
-
-
 
 };
 
