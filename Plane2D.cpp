@@ -5,7 +5,7 @@ Plane2D::Plane2D(char* filename) {
 	FILE *fp = NULL;
 	fp = fopen(filename, "r");
 
-	lines = new Line[20];
+	lines = new Line[40];
 	points = new Point[MAXPOINT];
 	lSize = 0;
 	pSize = 0;
@@ -24,11 +24,11 @@ Plane2D::Plane2D(char* filename) {
     	fscanf(fp, "%d", &lines[lSize].p2.x);
     	fscanf(fp, "%d", &lines[lSize].p2.y);
 
-    	printf("%d %d %d %d\n", lines[lSize].p1.x , lines[lSize].p1.y , lines[lSize].p2.x , lines[lSize].p2.y );
+    	//printf("%d %d %d %d\n", lines[lSize].p1.x , lines[lSize].p1.y , lines[lSize].p2.x , lines[lSize].p2.y );
 
     	int N;
     	Point* pTemps = lines[lSize].getArrayOfPoints(&N);
-    	printf("%d\n", N);
+    	
     	for (int i = 0; i < N; i++) {
     		points[pSize].x = pTemps[i].x;
     		points[pSize].y = pTemps[i].y;

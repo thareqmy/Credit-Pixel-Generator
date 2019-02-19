@@ -48,7 +48,7 @@ public:
 	void lineToFrame(Color, Line);
 	Pixel getPixelFromLoc(int x, int y);
 	bool isPixelOccupied(int x, int y, Color occupiedColor);
-	void plane2DToFrame(Color c, Plane2D pl);
+	void plane2DToFrame(int offsetx, int offsety, int multiplier, Color c, Plane2D pl);
 
 	//Pixel FBPToPixel(Point);
 	//Pixel FBPToPixel(int x,int y);

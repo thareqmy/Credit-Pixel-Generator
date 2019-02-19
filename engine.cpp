@@ -43,6 +43,7 @@ threadInfo_t threads[] = {
   int g = 0;
   Color bgc(255,255,255);
   Line l1(30, 30, 800, 800);
+  Plane2D segitiga("segitiga.txt");
   //Plane2D pesawat("40479_plane3d.txt");
 
 void *service(void *arg) {
@@ -77,19 +78,14 @@ void *service(void *arg) {
             }
 
 
-            Color c(0,0,h);
+            Color c(0,0,0);
 
             
             
-            f.createBackground(bgc);
-            for (int i = 0 ;i < 10; i++){
-                for (int j = 0; j < 10; j++) {
-                    Pixel pix(300 + i + h, 600 + j + g, 0, 255, 0);
-                    f.pixelToFrame(pix);
-                }
-            }
+            
             //f.lineToFrame(c, l1);
-            //f.plane2DToFrame(c, pesawat);
+            //f.lineToFrame(c, l1);
+            f.plane2DToFrame(300,300,10,c, segitiga);
         } else {
 
         }
@@ -101,7 +97,7 @@ void *service(void *arg) {
 
 int main() {
 
-
+    f.createBackground(bgc);
     /* Fire up threads */
     for (long i = 0; i < sizeof (threads) / sizeof (threadInfo_t); i++) {
         if (pthread_create(&threads[i].tid, NULL, service, (void *)i) < 0) {
